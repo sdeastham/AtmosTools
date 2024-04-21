@@ -63,7 +63,7 @@ public static class ISAtmos
         double[] referencePressures = AltitudeToPressure(testAltitudes);
         _pressureInterp = Interpolate.Linear(testAltitudes, referencePressures);
     }
-
+    
     public static double[] AltitudeToTemperature(double[] altitudes)
     {
         // Input: vector of altitudes in km
@@ -153,5 +153,12 @@ public static class ISAtmos
         // Input: altitude in km
         // Output: pressure in Pa
         return AltitudeToPressure([altitude])[0];
+    }
+    
+    public static double AltitudeToTemperature(double altitude)
+    {
+        // Input: altitude in km
+        // Output: pressure in Pa
+        return AltitudeToTemperature([altitude])[0];
     }
 }
