@@ -126,6 +126,34 @@ public static class Geodesy
         (double[] lons, double[] lats) = GreatCircleWaypoints(lon0, lat0, lon1, lat1, segmentAngles);
         return (lons, lats, segmentLengths);
     }
+
+    public static double CourseDegrees(double lon0, double lat0, double lon1, double lat1)
+    {
+        // Convert to radians
+        double lon0Rad = Trig.DegreeToRadian(lon0);
+        double lat0Rad = Trig.DegreeToRadian(lat0);
+        double lon1Rad = Trig.DegreeToRadian(lon1);
+        double lat1Rad = Trig.DegreeToRadian(lat1);
+
+        return CourseRad(lon0Rad, lat0Rad, lon1Rad, lat1Rad) * 180.0 / Math.PI;
+    }
+
+    public static double CourseRad(double lon0Rad, double lat0Rad, double lon1Rad, double lat1Rad)
+    {
+        // Calculate the course from point 0 to point 1, with locations supplied in radians
+        // Course is returned in radians
+        // Get the course
+        double deltaLonRad = lon1Rad - lon0Rad;
+        
+        // These will be heavily reused
+        double sinLat0 = Trig.Sin(lat0Rad);
+        double cosLat0 = Trig.Cos(lat0Rad);
+        
+        double numerator = Trig.Cos(lat1Rad) * Trig.Sin(deltaLonRad);
+        double denominator = cosLat0 * Trig.Sin(lat1Rad) -
+                             sinLat0 * Trig.Cos(lat1Rad) * Trig.Cos(deltaLonRad);
+        return Math.Atan2(numerator,denominator);
+    }
     
     public static (double[], double[], double[]) GreatCircleWaypointsByLength(double lon0, double lat0, double lon1, double lat1,
         double distancePerWaypoint)
@@ -168,20 +196,12 @@ public static class Geodesy
         double lon1Rad = Trig.DegreeToRadian(lon1);
         double lat1Rad = Trig.DegreeToRadian(lat1);
         
-        // Get the initial course
-        double deltaLonRad = lon1Rad - lon0Rad;
-        
         // These will be heavily reused
         double sinLat0 = Trig.Sin(lat0Rad);
         double cosLat0 = Trig.Cos(lat0Rad);
         
-        double numerator = Trig.Cos(lat1Rad) * Trig.Sin(deltaLonRad);
-        double denominator = cosLat0 * Trig.Sin(lat1Rad) -
-                             sinLat0 * Trig.Cos(lat1Rad) * Trig.Cos(deltaLonRad);
-        double initialCourse = Math.Atan2(numerator,denominator);
-        // Alternative formula for the great circle distance
-        //double gcd = Math.Atan2(Math.Sqrt(denominator * denominator + numerator * numerator),
-        //                        Trig.Sin(lat0Rad) * Trig.Sin(lat1Rad) + Trig.Cos(lat0Rad) * Trig.Cos(lat1Rad) * Trig.Cos(deltaLonRad));
+        // Get the initial course
+        double initialCourse = CourseRad(lon0Rad, lat0Rad, lon1Rad, lat1Rad);
         
         // These will also be heavily used
         double sinCourse = Trig.Sin(initialCourse);
