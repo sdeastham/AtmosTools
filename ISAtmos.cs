@@ -140,7 +140,7 @@ public static class ISAtmos
             }
             else
             {
-                pressure = pressureBase * Math.Exp(_gasPremultiplier * (zBase_m - zCeiling_m) / temperatureBase);
+                pressure = pressureBase * Math.Exp(_gasPremultiplier * (zBase_m - zCurrent_m) / temperatureBase);
             }
             // Put the value back in the output
             outputPressures[sortingIndices[i]] = pressure;
